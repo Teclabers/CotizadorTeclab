@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cotizador — Teclab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #1469DC;
+      --blue-dark:  #0d4fa3;
+      --blue-light: #e8f1fc;
+      --blue-mid:   #c2d9f8;
+      --orange:     #f97316;
+      --orange-light: #fff4ed;
+      --green:      #16a34a;
+      --green-light: #dcfce7;
+      --text:       #0f1e35;
+      --muted:      #64748b;
+      --border:     #e2e8f0;
+      --bg:         #f4f7fb;
+      --white:      #ffffff;
+      --radius:     12px;
+      --radius-sm:  8px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    /* ── HEADER ── */
+    .top-bar {
+      background: #121b2a;
+      padding: 0 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 20px; }
+    .top-bar img { height: 40px; border-radius: 6px; }
+    .top-bar-divider {
+      width: 1px; height: 32px;
+      background: rgba(255,255,255,0.3);
+    }
+    .top-bar-text h1 {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .top-bar-text p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.72rem;
+      margin-top: 2px;
+      font-weight: 400;
+    }
+    .top-bar-badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── CONTAINER ── */
+    .container {
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--blue);
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--blue-mid);
+    }
+
+    /* ── GRID ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    }
+
+    .card-header {
+      background: #1469DC;
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-header-icon {
+      width: 18px; height: 18px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+    }
+
+    .card-header-alt {
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--blue-mid);
+    }
+
+    .card-body { padding: 1.1rem 1.25rem; }
+
+    /* ── INPUTS ── */
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .input-group input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      background: #fafbfc;
+    }
+    .input-group input[type="text"]:focus {
+      border-color: var(--blue);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(20,105,220,0.1);
+    }
+
+    .input-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-badge input { width: 72px !important; }
+
+    .badge-pct {
+      background: var(--orange);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      min-width: 48px;
+      text-align: center;
+    }
+
+    /* ── TOGGLE CON LABEL ── */
+    .label-with-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .aran2-group { transition: opacity 0.2s; }
+    .aran2-group.inactive { opacity: 0.38; }
+    .aran2-group.inactive input { pointer-events: none; background: #f1f5f9; }
+
+    /* ── TABLE ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+
+    thead tr { background: var(--blue-light); }
+    thead th {
+      font-size: 0.63rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue-dark);
+      padding: 8px 14px;
+      text-align: left;
+    }
+    thead th:not(:first-child) { text-align: right; }
+
+    tbody td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #fafbfd; }
+
+    .label-cell { font-weight: 600; color: var(--text); }
+    .sub-label { color: var(--muted); padding-left: 18px; font-weight: 400; font-size: 0.85rem; }
+    .meta-cell { font-size: 0.72rem; color: var(--muted); }
+    .amount { text-align: right; font-variant-numeric: tabular-nums; }
+
+    /* ── PILLS ── */
+    .pill {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 4px 11px;
+      border-radius: 6px;
+    }
+    .pill-blue   { background: var(--blue);   color: #fff; }
+    .pill-green  { background: var(--green);  color: #fff; }
+    .pill-orange { background: var(--orange); color: #fff; }
+
+    .total-row td {
+      background: var(--blue-light);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--blue-dark);
+      border-top: 2px solid var(--blue-mid);
+    }
+
+    tr.row-inactive { opacity: 0.35; }
+
+    /* ── HIGHLIGHT CONTADO ── */
+    .medio-highlight-contado td {
+      background: var(--blue-light);
+      font-weight: 600;
+    }
+
+    /* ── DESCUENTOS ── */
+    .disc-cols-header {
+      display: flex;
+      justify-content: flex-end;
+      padding: 7px 14px 4px;
+      border-bottom: 1px solid var(--border);
+      background: var(--blue-light);
+    }
+    .disc-cols-header span {
+      font-size: 0.63rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue-dark);
+      min-width: 120px;
+      text-align: right;
+    }
+
+    .discount-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      transition: opacity 0.2s, background 0.15s;
+    }
+    .discount-row:last-child { border-bottom: none; }
+    .discount-row.inactive { opacity: 0.28; }
+    .discount-row:hover { background: #fafbfd; }
+
+    .discount-left { display: flex; align-items: center; gap: 10px; }
+
+    .disc-pct-input {
+      width: 56px;
+      padding: 5px 7px;
+      border: 1.5px solid var(--orange);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--orange-light);
+      text-align: center;
+      outline: none;
+    }
+    .disc-pct-input:focus {
+      border-color: #ea580c;
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+    }
+    .disc-pct-symbol { font-size: 0.88rem; font-weight: 700; color: var(--orange); }
+
+    .discount-values { display: flex; }
+    .discount-col { min-width: 120px; text-align: right; }
+    .discount-col .dval {
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+    .discount-col .dlabel {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── TOGGLE ── */
+    .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 3px; bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle input:checked + .slider { background: var(--blue); }
+    .toggle input:checked + .slider::before { transform: translateX(16px); }
+
+    /* Toggle Arancel 2: rojo cuando está desactivado */
+    #aran2_toggle + .slider { background: #e53e3e; }
+    #aran2_toggle:checked + .slider { background: var(--blue); }
+
+    /* ── MEDIOS DE PAGO: cards individuales ── */
+    .medio-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    }
+    .medio-card-header {
+      padding: 10px 18px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .medio-card-header.contado  { background: #1469DC; color: #fff; }
+    .medio-card-header.tarjeta  { background: #1469DC; color: #fff; }
+    .medio-card-header.suscr    { background: #1469DC; color: #fff; }
+
+    /* ── NOTA ── */
+    .nota {
+      background: var(--orange-light);
+      border: 1px solid #fed7aa;
+      border-left: 4px solid var(--orange);
+      border-radius: var(--radius-sm);
+      padding: 11px 16px;
+      font-size: 0.8rem;
+      color: #92400e;
+      margin-top: 1.5rem;
+    }
+    .nota strong { color: #c2410c; }
+
+    /* ── SUSCRIPCIÓN TABLE ── */
+    .suscr-table td { padding: 12px 18px; }
+
+    /* ── MODALITY TAG ── */
+    .modality-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .modality-tag.si  { background: var(--green-light);  color: var(--green); }
+    .modality-tag.ci  { background: #fff4ed; color: var(--orange); }
+    .modality-tag.adm { background: var(--blue-light); color: var(--blue-dark); }
+
+    @media (max-width: 680px) {
+      .layout { grid-template-columns: 1fr; }
+      .input-grid { grid-template-columns: 1fr; }
+      .top-bar { padding: 0 16px; }
+      .top-bar-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <img src="data:image/png;base64,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CeSWN0b29fix7h96xETBvbDl2QWO1VNrtle2Gjqnc00TqeOQOdy8uxztJB102NL9sazjKccoX0Nouphpnu5xFJBHM2N/bnYJGu5HftN0eg69AucRMhrPnvN0nt8dBLWyvp46p9W1pPUTPDQ5+++yGt9fRfrW5Deq11e6ruM87rj5ZrHSHmdMWfVLiepI139fVatEHSjPMtGPfQBvD3UHkmAB8MbpWxdvLEpb5gZrpyh2tdNL6sOf5fYrSLXa71JBStLjEDFG98Bd3MT3NLoie/uFvXr3XMImQ19vllfMZnyPdKXcxeTsk997+K6C/wCc5XfW0bbpeZpvYpPOgc1jI3CXQHmOLAC+T3R77tu6d1ziJg6LKM3yjJoYIb1dDPFBIZWMZBHC0yHu9wja0Pf0+s7Z+aw6bJL3TZScohuD23h1S+qNVytLjK4kudojXUk+muq1KJkG8uGW5BX3Cor6ivHtFTTGkmdHBHGHxE7LdNaB3HfW183LK8huUVbHXXOWdteIfa+ZrdzeUNRlx1skbPXufXa0qJkHUN4hZk2wiyNvkopGw+QD5UfnCLt5Ym5fM5NdOXm1rprS11pya+2qGGG33GSGKAzckYa0t/TNa2UEEEODgxoIOx0C1CJkNEREQREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREH/9k=" alt="Teclab" style="height:56px;" />
+    <div class="top-bar-divider"></div>
+    <div class="top-bar-text">
+      <h1>Cotizador de Aranceles</h1>
+      <p>Modificá los valores naranjas · los demás se calculan solos</p>
+    </div>
+  </div>
+  <div class="top-bar-badge">Uso interno</div>
+</div>
+
+<div class="container">
+
+  <!-- ── FILA 1: Valores base + Resumen ── -->
+  <div class="section-label">Configuración</div>
+  <div class="layout" style="margin-bottom:1.5rem;">
+
+    <!-- Valores base -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-icon">⚙</span>
+        Valores base
+      </div>
+      <div class="card-body">
+        <div class="input-grid">
+          <div class="input-group">
+            <label>Valor matrícula</label>
+            <input type="text" id="matricula" value="233.556" placeholder="Ej: 233.556" />
+          </div>
+          <div class="input-group">
+            <label>% Descuento</label>
+            <div class="input-badge">
+              <input type="text" id="pct_matricula" value="75" style="width:72px;" />
+              <span class="badge-pct" id="badge_mat">75%</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Valor arancel 1</label>
+            <input type="text" id="arancel" value="583.889" placeholder="Ej: 583.889" />
+          </div>
+          <div class="input-group">
+            <label>% Descuento</label>
+            <div class="input-badge">
+              <input type="text" id="pct_arancel" value="29" style="width:72px;" />
+              <span class="badge-pct" id="badge_aran">29%</span>
+            </div>
+          </div>
+          <div class="input-group aran2-group" id="aran2_grp_val">
+            <label class="label-with-toggle">
+              <span>Valor arancel 2</span>
+              <label class="toggle">
+                <input type="checkbox" id="aran2_toggle" />
+                <span class="slider"></span>
+              </label>
+            </label>
+            <input type="text" id="arancel2" value="583.889" placeholder="Ej: 583.889" />
+          </div>
+          <div class="input-group aran2-group" id="aran2_grp_pct">
+            <label>% Descuento</label>
+            <div class="input-badge">
+              <input type="text" id="pct_arancel2" value="29" style="width:72px;" />
+              <span class="badge-pct" id="badge_aran2">29%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-icon">$</span>
+        Resumen de valores
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th>Original</th>
+            <th>c/Descuento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-cell">Matrícula</td>
+            <td class="amount" id="mat_orig">—</td>
+            <td class="amount"><span class="pill pill-green" id="mat_desc">—</span></td>
+          </tr>
+          <tr>
+            <td class="label-cell">Arancel 1</td>
+            <td class="amount" id="aran_orig">—</td>
+            <td class="amount"><span class="pill pill-green" id="aran_desc">—</span></td>
+          </tr>
+          <tr id="aran2_row">
+            <td class="label-cell">Arancel 2</td>
+            <td class="amount" id="aran2_orig">—</td>
+            <td class="amount"><span class="pill pill-green" id="aran2_desc">—</span></td>
+          </tr>
+          <tr class="total-row">
+            <td class="label-cell">Total</td>
+            <td class="amount" id="total_orig">—</td>
+            <td class="amount" id="total_desc">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ── FILA 2: Descuentos + Medios de pago superior ── -->
+  <div class="section-label">Opciones de pago</div>
+  <div class="layout" style="margin-bottom:1.25rem;">
+
+    <!-- Descuentos -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-header-icon">%</span>
+        Descuentos disponibles
+      </div>
+      <div class="disc-cols-header">
+        <span>Cupón / 1 pago adm.</span>
+        <span id="disc-cols-label">Cuotas (×3)</span>
+      </div>
+      <div id="discounts-list"></div>
+    </div>
+
+    <!-- Al contado + Tarjeta -->
+    <div style="display:flex; flex-direction:column; gap:1.1rem;">
+
+      <div class="medio-card">
+        <div class="medio-card-header contado">
+          <span>💳</span> Al Contado
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Modalidad</th>
+              <th>Importe</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="medio-highlight-contado">
+              <td>
+                <span class="meta-cell">TC / Débito / Transferencia / Cupón</span><br>
+                <span class="modality-tag si">1 pago · sin interés</span>
+              </td>
+              <td class="amount"><span class="pill pill-blue" id="tc_val">—</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="medio-card">
+        <div class="medio-card-header tarjeta">
+          <span>💳</span> Tarjeta
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Banco / Tarjeta</th>
+              <th>3 cuotas</th>
+              <th id="th_6cuotas" style="text-align:right; display:none;">6 cuotas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-cell" style="font-size:0.78rem;">Santander, Galicia, BBVA,<br>Nación, Macro, Naranja <span class="modality-tag ci" style="font-size:0.62rem;">6.94% / 14.12%</span></td>
+              <td class="amount"><span class="pill pill-orange" id="t3_prem">—</span></td>
+              <td class="amount" id="td_t6_prem" style="display:none;"><span class="pill pill-orange" id="t6_prem">—</span></td>
+            </tr>
+            <tr>
+              <td class="label-cell" style="font-size:0.78rem;">Resto de bancos <span class="modality-tag ci" style="font-size:0.62rem;">8.68% / 15.19%</span></td>
+              <td class="amount"><span class="pill pill-orange" id="t3_rest">—</span></td>
+              <td class="amount" id="td_t6_rest" style="display:none;"><span class="pill pill-orange" id="t6_rest">—</span></td>
+            </tr>
+            <tr>
+              <td class="label-cell" style="font-size:0.78rem;">Naranja X <span class="modality-tag si" style="font-size:0.62rem;">sin interés</span></td>
+              <td class="amount"><span class="pill pill-green" id="t3_nx">—</span></td>
+              <td class="amount" id="td_t6_nx" style="display:none;"><span class="pill pill-green" id="t6_nx">—</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SUSCRIPCIÓN — ancho completo ── -->
+  <div class="medio-card">
+    <div class="medio-card-header suscr">
+      <span>🔄</span> Suscripción
+    </div>
+    <table class="suscr-table">
+      <thead>
+        <tr>
+          <th>Concepto</th>
+          <th>Importe</th>
+          <th id="suscr_cuotas_th" style="text-align:right;">Por cuota</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="label-cell">Pago administrativo</span><br>
+            <span class="modality-tag adm">1 pago · adm</span>
+          </td>
+          <td class="amount"><span class="pill pill-orange" id="suscr1_val">—</span></td>
+          <td id="suscr_cuotas_td" class="amount">
+            <span id="suscr3_row"><span class="modality-tag si" style="margin-right:6px;">3 cuotas · s/int</span><span class="pill pill-green" id="suscr3_val">—</span></span>
+            <span id="suscr6ci_row" style="display:none;"><span class="modality-tag si" style="margin-right:6px;">6 cuotas · s/int</span><span class="pill pill-green" id="suscr6ci_val">—</span></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="nota">
+    <strong>Recordá:</strong> Modificá solo los valores en naranja. Activá el interruptor de <strong>Arancel 2</strong> para el modo Cuatrimestral. Los demás valores se calculan automáticamente.
+  </div>
+
+</div>
+
+<script>
+  const fmt = v => '$ ' + Math.round(v).toLocaleString('es-AR');
+
+  function parseArg(str) {
+    if (!str) return 0;
+    let s = str.trim();
+    if (/^\d{1,3}(\.\d{3})*(,\d+)?$/.test(s)) {
+      s = s.replace(/\./g, '').replace(',', '.');
+    } else {
+      s = s.replace(/[^0-9.,]/g, '').replace(',', '.');
+    }
+    return parseFloat(s) || 0;
+  }
+
+  const discounts = [
+    { pct: 10, active: true },
+    { pct: 15, active: true },
+    { pct: 25, active: true },
+  ];
+
+  let aran2Active = false;
+
+  function compute() {
+    const mat      = parseArg(document.getElementById('matricula').value);
+    const pctMat   = parseArg(document.getElementById('pct_matricula').value);
+    const aran     = parseArg(document.getElementById('arancel').value);
+    const pctAran  = parseArg(document.getElementById('pct_arancel').value);
+    const aran2    = parseArg(document.getElementById('arancel2').value);
+    const pctAran2 = parseArg(document.getElementById('pct_arancel2').value);
+
+    document.getElementById('badge_mat').textContent   = pctMat + '%';
+    document.getElementById('badge_aran').textContent  = pctAran + '%';
+    document.getElementById('badge_aran2').textContent = pctAran2 + '%';
+
+    const matDesc   = mat   - mat   * (pctMat   / 100);
+    const aranDesc  = aran  - aran  * (pctAran  / 100);
+    const aran2Desc = aran2 - aran2 * (pctAran2 / 100);
+
+    const totalOrig = mat + aran + (aran2Active ? aran2 : 0);
+    const totalDesc = matDesc + aranDesc + (aran2Active ? aran2Desc : 0);
+
+    const tc         = totalDesc;
+    const t3_prem    = (totalDesc * 1.0694) / 3;
+    const t3_rest    = (totalDesc * 1.0868) / 3;
+    const t3_nx      = totalDesc / 3;
+    const t6_prem    = (totalDesc * 1.1412) / 6;
+    const t6_rest    = (totalDesc * 1.1519) / 6;
+    const t6_nx      = totalDesc / 6;
+    const suscr1     = totalDesc * 0.25;
+    const suscr3     = totalDesc / 3;
+    const suscr6ci   = totalDesc / 6;
+
+    document.getElementById('mat_orig').textContent   = fmt(mat);
+    document.getElementById('mat_desc').textContent   = fmt(matDesc);
+    document.getElementById('aran_orig').textContent  = fmt(aran);
+    document.getElementById('aran_desc').textContent  = fmt(aranDesc);
+    document.getElementById('aran2_orig').textContent = aran2Active ? fmt(aran2) : '—';
+    document.getElementById('aran2_desc').textContent = aran2Active ? fmt(aran2Desc) : '—';
+    document.getElementById('total_orig').textContent = fmt(totalOrig);
+    document.getElementById('total_desc').textContent = fmt(totalDesc);
+    document.getElementById('tc_val').textContent     = fmt(tc);
+    document.getElementById('t3_prem').textContent    = fmt(t3_prem);
+    document.getElementById('t3_rest').textContent    = fmt(t3_rest);
+    document.getElementById('t3_nx').textContent      = fmt(t3_nx);
+    document.getElementById('t6_prem').textContent    = fmt(t6_prem);
+    document.getElementById('t6_rest').textContent    = fmt(t6_rest);
+    document.getElementById('t6_nx').textContent      = fmt(t6_nx);
+    document.getElementById('suscr1_val').textContent = fmt(suscr1);
+    document.getElementById('suscr3_val').textContent = fmt(suscr3);
+    document.getElementById('suscr6ci_val').textContent = fmt(suscr6ci);
+
+    // Columna de 6 cuotas en tarjeta: solo visible en Cuatrimestral
+    const show6 = aran2Active ? '' : 'none';
+    document.getElementById('th_6cuotas').style.display   = show6;
+    document.getElementById('td_t6_prem').style.display   = show6;
+    document.getElementById('td_t6_rest').style.display   = show6;
+    document.getElementById('td_t6_nx').style.display     = show6;
+
+    document.getElementById('suscr3_row').style.display   = aran2Active ? 'none' : '';
+    document.getElementById('suscr6ci_row').style.display = aran2Active ? '' : 'none';
+
+    renderDiscounts(suscr1, aran2Active ? (totalDesc * 1.1412) / 6 : (totalDesc * 1.0694) / 3);
+  }
+
+  function updateAran2State() {
+    aran2Active = document.getElementById('aran2_toggle').checked;
+    document.getElementById('aran2_grp_val').classList.toggle('inactive', !aran2Active);
+    document.getElementById('aran2_grp_pct').classList.toggle('inactive', !aran2Active);
+    document.getElementById('aran2_row').classList.toggle('row-inactive', !aran2Active);
+    compute();
+  }
+
+  function renderDiscounts(suscr1, cuotaBase) {
+    document.getElementById('disc-cols-label').textContent = aran2Active ? 'Cuotas (×6 c/int)' : 'Cuotas (×3)';
+
+    const container = document.getElementById('discounts-list');
+    container.innerHTML = '';
+    discounts.forEach((d, i) => {
+      const cupon  = suscr1    - suscr1    * (d.pct / 100);
+      const cuotas = cuotaBase - cuotaBase * (d.pct / 100);
+      const row = document.createElement('div');
+      row.className = 'discount-row' + (d.active ? '' : ' inactive');
+      row.innerHTML = `
+        <div class="discount-left">
+          <label class="toggle">
+            <input type="checkbox" ${d.active ? 'checked' : ''} data-idx="${i}" class="disc-toggle"/>
+            <span class="slider"></span>
+          </label>
+          <input type="text" class="disc-pct-input" value="${d.pct}" placeholder="%" data-idx="${i}" />
+          <span class="disc-pct-symbol">%</span>
+        </div>
+        <div class="discount-values">
+          <div class="discount-col">
+            <div class="dval">${d.active ? fmt(cupon) : '—'}</div>
+            <div class="dlabel">1 pago</div>
+          </div>
+          <div class="discount-col">
+            <div class="dval">${d.active ? fmt(cuotas) : '—'}</div>
+            <div class="dlabel">por cuota</div>
+          </div>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+
+    container.querySelectorAll('.disc-toggle').forEach(cb => {
+      cb.addEventListener('change', function() {
+        discounts[parseInt(this.dataset.idx)].active = this.checked;
+        compute();
+      });
+    });
+
+    container.querySelectorAll('.disc-pct-input').forEach(inp => {
+      inp.addEventListener('blur', function() {
+        const val = parseFloat(this.value.replace(',', '.'));
+        if (!isNaN(val) && val > 0 && val <= 99) {
+          discounts[parseInt(this.dataset.idx)].pct = val;
+          compute();
+        }
+      });
+      inp.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') this.blur();
+      });
+    });
+  }
+
+  ['matricula', 'arancel', 'arancel2', 'pct_matricula', 'pct_arancel', 'pct_arancel2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('blur', compute);
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') this.blur();
+    });
+  });
+
+  document.getElementById('aran2_toggle').addEventListener('change', updateAran2State);
+  updateAran2State();
+</script>
+</body>
+</html>
